@@ -1,0 +1,30 @@
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.24;
+
+contract SatoshiQuotes {
+    string[] private quotes = [
+        "I've moved on to other things. It's in good hands with Gavin and everyone.",
+        "The root problem with conventional currency is all the trust that's required.",
+        "Lost coins only make everyone else's coins worth slightly more.",
+        "The nature of Bitcoin is such that once version 0.1 was released, the core design was set in stone.",
+        "Governments are good at cutting off the heads of centrally controlled networks but pure P2P networks like Bitcoin seem to be holding their own.",
+        "With e-currency based on cryptographic proof, without the need to trust a third party middleman, money can be secure and transactions effortless.",
+        "I'm sure that in 20 years there will either be very large transaction volume or no volume."
+    ];
+
+    mapping(address => uint256) public uses;
+    event QuoteServed(address indexed caller, string quote);
+
+    function speak(uint256 seed) external returns (string memory) {
+        uses[msg.sender]++;
+        uint256 index = uint256(
+            keccak256(abi.encodePacked(block.timestamp, msg.sender, seed))
+        ) % quotes.length;
+        emit QuoteServed(msg.sender, quotes[index]);
+        return quotes[index];
+    }
+
+    function peek(uint256 seed) external view returns (string memory) {
+        return quotes[seed % quotes.length];
+    }
+}
