@@ -1,0 +1,30 @@
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.24;
+
+contract ElonQuotes {
+    string[] private quotes = [
+        "I think Bitcoin is on the verge of getting broad acceptance.",
+        "It might make sense just to get some Bitcoin as a buffer against fiat currency inflation.",
+        "Cryptocurrency is interesting as it bypasses currency controls.",
+        "Dogecoin is the people's crypto.",
+        "Paper money is going away.",
+        "Crypto has a lot of promise, but it must be handled with care.",
+        "Tesla will not be selling any Bitcoin."
+    ];
+
+    mapping(address => uint256) public uses;
+    event QuoteServed(address indexed caller, string quote);
+
+    function speak(uint256 seed) external returns (string memory) {
+        uses[msg.sender]++;
+        uint256 index = uint256(
+            keccak256(abi.encodePacked(block.timestamp, msg.sender, seed))
+        ) % quotes.length;
+        emit QuoteServed(msg.sender, quotes[index]);
+        return quotes[index];
+    }
+
+    function peek(uint256 seed) external view returns (string memory) {
+        return quotes[seed % quotes.length];
+    }
+}
