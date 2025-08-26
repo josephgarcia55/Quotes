@@ -1,0 +1,30 @@
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.24;
+
+contract VitalikQuotes {
+    string[] private quotes = [
+        "The blockchain solves the problem of manipulation. When I came across it, the idea of decentralized money sounded really good.",
+        "The Ethereum ecosystem is moving faster than I expected.",
+        "We need to move beyond just money and finance to use blockchain for governance, identity, and more.",
+        "The point of crypto is to reduce dependence on centralized actors.",
+        "Scalability is arguably the problem that is most important to solve in the blockchain space today.",
+        "The internet of money should not be controlled by a handful of banks.",
+        "Proof of Stake will help make Ethereum more secure and energy efficient."
+    ];
+
+    mapping(address => uint256) public uses;
+    event QuoteServed(address indexed caller, string quote);
+
+    function speak(uint256 seed) external returns (string memory) {
+        uses[msg.sender]++;
+        uint256 index = uint256(
+            keccak256(abi.encodePacked(block.timestamp, msg.sender, seed))
+        ) % quotes.length;
+        emit QuoteServed(msg.sender, quotes[index]);
+        return quotes[index];
+    }
+
+    function peek(uint256 seed) external view returns (string memory) {
+        return quotes[seed % quotes.length];
+    }
+}
