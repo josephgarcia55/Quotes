@@ -1,0 +1,30 @@
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.24;
+
+contract JackDorseyQuotes {
+    string[] private quotes = [
+        "The world ultimately will have a single currency. The internet will have a single currency. I personally believe it will be Bitcoin.",
+        "Bitcoin will eventually be the single currency of the internet.",
+        "If I were not at Square or Twitter, I would be working on Bitcoin.",
+        "We love you Bitcoin.",
+        "The internet deserves a native currency.",
+        "I don't think there is anything more important in my lifetime to work on.",
+        "The Bitcoin whitepaper is one of the most seminal works of computer science in the last 20 years."
+    ];
+
+    mapping(address => uint256) public uses;
+    event QuoteServed(address indexed caller, string quote);
+
+    function speak(uint256 seed) external returns (string memory) {
+        uses[msg.sender]++;
+        uint256 index = uint256(
+            keccak256(abi.encodePacked(block.timestamp, msg.sender, seed))
+        ) % quotes.length;
+        emit QuoteServed(msg.sender, quotes[index]);
+        return quotes[index];
+    }
+
+    function peek(uint256 seed) external view returns (string memory) {
+        return quotes[seed % quotes.length];
+    }
+}
